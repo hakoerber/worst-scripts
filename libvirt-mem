@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+u(){ echo "usage: $0 [<URI>]">&2;exit 1;};(($#-1))||c="$1"&&{ !(($#-2))&&u;};c="${c:-""}";g(){ grep "${@}";};e(){ echo "${@}";};k="KiB";v(){ virsh -c "$c" "${@}";};s(){ { s=0;while read m v;do printf '%s:|%10d%s\n' $v $m $k;s=$((m+s));done;for x in 2 1;do for _ in $(seq 15);do e -n '-';done;((--x))&&e -n '|';done;printf '\ntotal:|%10d%s' "${s}" "${k}";}|column -ts'|' -o '| ';};for h in $(v list --name);do v dumpxml $h|g memory|g -oP '\d+'|cat - <(e $h)|tr '\n' ' '|cat - <(e -e '\n');done|sort -u|comm -23 - <(e -e '\n')|s
